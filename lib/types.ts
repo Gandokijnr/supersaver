@@ -65,6 +65,12 @@ export interface CatalogItem extends Product {
   discount_percent: number | null
 }
 
+export interface CatalogPromotion {
+  id: string
+  name: string
+  products: CatalogItem[]
+}
+
 export interface CartItemRow {
   id: string
   cart_id: string

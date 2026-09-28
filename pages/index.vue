@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { CatalogItem, Category } from '~/lib/types'
+import type { CatalogItem, CatalogPromotion, Category } from '~/lib/types'
 
 const branchStore = useBranchStore()
 const { fetchBranchProducts, fetchCategories, fetchPromotionProducts } = useCatalog()
-const promotionProducts = ref<CatalogItem[]>([])
+const promotions = ref<CatalogPromotion[]>([])
 const promotionsLoading = ref(true)
 const promotionsError = ref('')
 const products = ref<CatalogItem[]>([])
@@ -47,13 +47,13 @@ let promotionRequest = 0
 async function loadPromotions() {
   const request = ++promotionRequest
   const branchId = branchStore.currentBranch?.id
-  promotionProducts.value = []
+  promotions.value = []
   promotionsError.value = ''
   promotionsLoading.value = !!branchId
   if (!branchId) return
   try {
     const items = await fetchPromotionProducts(branchId)
-    if (request === promotionRequest) promotionProducts.value = items
+    if (request === promotionRequest) promotions.value = items
   } catch {
     if (request === promotionRequest) promotionsError.value = 'We could not load promotions. Please try again.'
   } finally {
@@ -114,16 +114,19 @@ watch(() => branchStore.currentBranch?.id, loadPromotions)
       </section>
 
       <!-- Promotions -->
-      <section v-if="promotionsLoading || promotionProducts.length || promotionsError">
-        <SectionHeader title="Promotions" />
-        <div v-if="promotionsLoading" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+      <div v-if="promotionsLoading" aria-label="Loading promotions" aria-busy="true">
+        <div class="skeleton h-7 w-48 rounded mb-4" />
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
           <ProductCardSkeleton v-for="n in 6" :key="n" />
         </div>
-        <p v-else-if="promotionsError" role="alert" class="card p-5 text-sm text-ink-600">
+      </div>
+      <p v-else-if="promotionsError" role="alert" class="card p-5 text-sm text-ink-600">
           {{ promotionsError }} <button class="font-semibold underline" @click="loadPromotions">Retry</button>
-        </p>
-        <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-          <ProductCard v-for="product in promotionProducts" :key="product.id" :product="product" />
+      </p>
+      <section v-for="promotion in promotions" :key="promotion.id">
+        <SectionHeader :title="promotion.name" />
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+          <ProductCard v-for="product in promotion.products" :key="product.id" :product="product" />
         </div>
       </section>
 

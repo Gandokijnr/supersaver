@@ -1,4 +1,4 @@
-import type { CatalogItem, Category, Brand } from '~/lib/types'
+import type { CatalogItem, CatalogPromotion, Category, Brand } from '~/lib/types'
 
 export function useCatalog() {
   const supabase = useSupabase()
@@ -78,15 +78,16 @@ export function useCatalog() {
     })
   }
 
-  async function fetchPromotionProducts(branchId: string): Promise<CatalogItem[]> {
+  async function fetchPromotionProducts(branchId: string): Promise<CatalogPromotion[]> {
     const now = new Date().toISOString()
     const { data, error } = await supabase
       .from('promotions')
-      .select('id, promotion_products!inner(product_id)')
+      .select('id, name, promotion_products!inner(product_id)')
       .eq('is_active', true)
       .eq('promotion_products.branch_id', branchId)
       .or(`start_at.is.null,start_at.lte.${now}`)
       .or(`end_at.is.null,end_at.gte.${now}`)
+      .order('created_at', { ascending: false })
 
     if (error) throw error
     const ids = [...new Set((data || []).flatMap(promotion =>
@@ -96,7 +97,14 @@ export function useCatalog() {
     for (let offset = 0; offset < ids.length; offset += 100) {
       products.push(...await fetchBranchProducts(branchId, 100, ids.slice(offset, offset + 100)))
     }
-    return products
+    const productsById = new Map(products.map(product => [product.id, product]))
+    return (data || []).map(promotion => ({
+      id: promotion.id,
+      name: promotion.name,
+      products: [...new Set(promotion.promotion_products.map(item => item.product_id as string))]
+        .map(id => productsById.get(id))
+        .filter((product): product is CatalogItem => !!product),
+    })).filter(promotion => promotion.products.length > 0)
   }
 
   async function fetchByCategory(branchId: string, categorySlug: string): Promise<CatalogItem[]> {
