@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { formatNaira } from '~/lib/format'
 import type { CatalogItem } from '~/lib/types'
+import { productImages } from '~/lib/productImages'
 
 const route = useRoute()
 const branchStore = useBranchStore()
@@ -15,6 +16,8 @@ const quantity = ref(1)
 const adding = ref(false)
 const justAdded = ref(false)
 const addError = ref('')
+const selectedImage = ref(0)
+const gallery = computed(() => productImages(product.value?.image_url, product.value?.images))
 
 onMounted(async () => {
   if (!branchStore.currentBranch) { loading.value = false; return }
@@ -59,7 +62,13 @@ const lowStock = computed(() => product.value && product.value.stock_quantity <=
     <div v-else-if="product" class="animate-fade-in">
       <div class="grid md:grid-cols-2 gap-8">
         <div class="card overflow-hidden rounded-2xl">
-          <img :src="product.image_url || ''" :alt="product.name" class="w-full aspect-square object-cover" />
+          <img v-if="gallery.length" :src="gallery[selectedImage] || gallery[0]" :alt="`${product.name} — image ${selectedImage + 1}`" class="w-full aspect-square object-contain" />
+          <div v-else class="aspect-square flex items-center justify-center text-ink-400 bg-ink-50">No image available</div>
+          <div v-if="gallery.length > 1" class="flex gap-2 p-3 overflow-x-auto">
+            <button v-for="(url, index) in gallery" :key="url" type="button" :aria-label="`View image ${index + 1} of ${product.name}`" :aria-pressed="selectedImage === index" class="flex-shrink-0 rounded-lg border-2 p-1" :class="selectedImage === index ? 'border-brand-600' : 'border-transparent'" @click="selectedImage = index">
+              <img :src="url" :alt="`${product.name} thumbnail ${index + 1}`" class="w-16 h-16 object-contain" />
+            </button>
+          </div>
         </div>
         <div>
           <p v-if="product.brand_name" class="text-sm text-ink-400 font-medium">{{ product.brand_name }}</p>

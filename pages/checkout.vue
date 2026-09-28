@@ -13,6 +13,19 @@ const address = ref('')
 const instructions = ref('')
 const placing = ref(false)
 const errorMsg = ref('')
+const { profile, restore: restoreProfile } = useCustomerProfile()
+const { user } = useCustomerAuth()
+watch(() => user.value?.id, () => {
+  name.value = ''; phone.value = ''; email.value = ''; address.value = ''
+})
+
+onMounted(async () => {
+  try { await restoreProfile() } catch { errorMsg.value = 'Saved profile could not be loaded. Enter your delivery details below.' }
+  name.value = profile.value.name
+  phone.value = profile.value.phone
+  email.value = profile.value.email
+  address.value = profile.value.address
+})
 
 const deliveryFee = computed(() => branchStore.currentBranch?.delivery_fee ?? 0)
 const total = computed(() => cartStore.subtotal + deliveryFee.value)
@@ -53,6 +66,7 @@ async function placeOrder() {
 <template>
   <div class="max-w-5xl mx-auto px-4 py-6 md:py-10">
     <h1 class="text-2xl font-bold text-ink-800 mb-6">Checkout</h1>
+    <p v-if="!user" class="card p-4 mb-4 text-sm text-ink-600"><NuxtLink to="/account?next=/checkout" class="text-brand-600 font-semibold">Sign in or create an account</NuxtLink> before ordering to track this order across devices.</p>
 
     <div v-if="cartStore.items.length === 0 && !placing" class="card p-10 text-center">
       <p class="text-ink-500">Your cart is empty.</p>

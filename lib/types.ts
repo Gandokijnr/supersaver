@@ -37,6 +37,7 @@ export interface Product {
   sku: string | null
   barcode: string | null
   image_url: string | null
+  images?: string[]
   unit: string | null
   is_active: boolean
 }

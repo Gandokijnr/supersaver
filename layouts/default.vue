@@ -3,7 +3,7 @@ const branchStore = useBranchStore()
 const cartStore = useCartStore()
 const route = useRoute()
 
-const showBranchGate = computed(() => !branchStore.currentBranch && route.path !== '/select-branch')
+const showBranchGate = computed(() => !branchStore.currentBranch && !['/select-branch', '/account', '/profile', '/orders'].includes(route.path) && !route.path.startsWith('/order/'))
 
 onMounted(async () => {
   branchStore.restoreBranch()

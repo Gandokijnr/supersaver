@@ -6,6 +6,7 @@ definePageMeta({ layout: 'admin', middleware: 'admin' })
 const { admin } = useAdminAuth()
 const { fetchInventory } = useAdminData()
 const supabase = useSupabase()
+const route = useRoute()
 
 const isSuperAdmin = computed(() => admin.value?.role === 'super_admin' || admin.value?.role === 'admin')
 const branches = ref<any[]>([])
@@ -23,7 +24,8 @@ onMounted(async () => {
   if (isSuperAdmin.value) {
     const { data } = await supabase.from('branches').select('id, name, slug').order('sort_order')
     branches.value = data || []
-    if (branches.value.length) branchFilter.value = branches.value[0].id
+    const requestedBranch = route.query.branch
+    if (branches.value.length) branchFilter.value = branches.value.find(b => b.id === requestedBranch)?.id || branches.value[0].id
   }
   await load()
 })
@@ -66,7 +68,10 @@ const filtered = computed(() => {
   <div>
     <div class="flex items-center justify-between mb-4 sm:mb-6 flex-wrap gap-3">
       <div><h1 class="text-xl sm:text-2xl font-bold text-ink-800">Inventory Management</h1><p class="text-sm text-ink-400 mt-1">Manage stock and pricing per branch</p></div>
-      <NuxtLink to="/supersaver_ipass/inventory/import" class="btn-primary text-sm">↑ Import Inventory</NuxtLink>
+      <div class="flex flex-wrap gap-2">
+        <NuxtLink :to="{ path: '/supersaver_ipass/inventory/add', query: { branch: effectiveBranch || undefined } }" class="btn-primary text-sm">+ Add Item</NuxtLink>
+        <NuxtLink to="/supersaver_ipass/inventory/import" class="btn-outline text-sm">↑ Import Inventory</NuxtLink>
+      </div>
     </div>
 
     <div class="flex gap-2 sm:gap-3 mb-4 flex-wrap">
@@ -85,7 +90,7 @@ const filtered = computed(() => {
     <div v-if="loading" class="card p-5 space-y-3"><div v-for="n in 8" :key="n" class="h-12 skeleton rounded-xl" /></div>
     <div v-else-if="filtered.length === 0" class="card p-10 text-center">
       <div class="text-5xl mb-3">📦</div><h2 class="text-lg font-bold text-ink-800">No inventory found</h2>
-      <p class="text-ink-500 mt-1">Try adjusting your filters or import inventory.</p>
+      <p class="text-ink-500 mt-1">Try adjusting your filters, add a single item, or import inventory.</p>
     </div>
     <div v-else>
       <!-- Mobile cards -->

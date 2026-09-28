@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatNaira } from '~/lib/format'
+import { productImages, validateProductImages } from '~/lib/productImages'
 
 definePageMeta({ layout: 'admin', middleware: 'admin' })
 
@@ -10,6 +11,10 @@ const product = ref<any>(null)
 const branchProducts = ref<any[]>([])
 const branches = ref<any[]>([])
 const loading = ref(true)
+const imageUrls = ref<string[]>([''])
+const savingImages = ref(false)
+const imageError = ref('')
+const imageSuccess = ref('')
 const showAdjust = ref(false)
 const adjustBP = ref<any>(null)
 const adjustForm = ref({ quantity: 0, reason: '' })
@@ -17,7 +22,11 @@ const adjustForm = ref({ quantity: 0, reason: '' })
 onMounted(async () => {
   const id = route.params.id as string
   const { data: prod } = await supabase.from('products').select('*, category:categories(name), brand:brands(name)').eq('id', id).maybeSingle()
-  if (prod) product.value = prod
+  if (prod) {
+    product.value = prod
+    const images = productImages(prod.image_url, prod.images)
+    imageUrls.value = images.length ? images : ['']
+  }
   const { data: bps } = await supabase.from('branch_products').select(`
     id, stock_quantity, selling_price, compare_at_price, is_available, is_active, updated_at,
     branch:branches(id, name, slug)
@@ -32,6 +41,24 @@ function openAdjust(bp: any) {
   adjustBP.value = bp
   adjustForm.value = { quantity: Number(bp.stock_quantity), reason: '' }
   showAdjust.value = true
+}
+
+async function saveImages() {
+  if (!product.value || savingImages.value) return
+  savingImages.value = true
+  imageError.value = ''; imageSuccess.value = ''
+  try {
+    const images = validateProductImages(imageUrls.value)
+    const { error } = await supabase.from('products').update({
+      image_url: images[0] || null, images, updated_at: new Date().toISOString(),
+    }).eq('id', product.value.id)
+    if (error) throw error
+    product.value.image_url = images[0] || null
+    product.value.images = images
+    imageSuccess.value = 'Product images saved.'
+  } catch (error: any) {
+    imageError.value = error.message || 'Could not save images.'
+  } finally { savingImages.value = false }
 }
 
 async function saveAdjust() {
@@ -85,6 +112,16 @@ async function updatePrice(bp: any, newPrice: number) {
         </div>
         <p v-if="product.description" class="text-sm text-ink-600 mt-3">{{ product.description }}</p>
       </div>
+
+      <form class="card p-5" @submit.prevent="saveImages">
+        <p class="text-sm text-ink-400 mb-4">Product images are shared across all branches.</p>
+        <fieldset :disabled="savingImages">
+          <ProductImageFields v-model="imageUrls" />
+          <button type="submit" class="btn-primary mt-4">{{ savingImages ? 'Saving...' : 'Save Images' }}</button>
+        </fieldset>
+        <p v-if="imageError" role="alert" class="text-sm text-red-600 mt-3">{{ imageError }}</p>
+        <p v-if="imageSuccess" role="status" class="text-sm text-brand-700 mt-3">{{ imageSuccess }}</p>
+      </form>
 
       <div class="card p-5">
         <h3 class="font-bold text-ink-800 mb-4">Branch Inventory</h3>

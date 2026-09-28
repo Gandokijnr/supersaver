@@ -32,7 +32,7 @@ export function useCatalog() {
         is_available,
         product:products!inner(
           id, name, slug, description, brand_id, category_id,
-          sku, barcode, image_url, unit, is_active,
+          sku, barcode, image_url, images, unit, is_active,
           brand:brands(name, slug),
           category:categories(name, slug)
         )
@@ -57,6 +57,7 @@ export function useCatalog() {
         sku: p.sku,
         barcode: p.barcode,
         image_url: p.image_url,
+        images: p.images,
         unit: p.unit,
         is_active: p.is_active,
         branch_product_id: row.id,

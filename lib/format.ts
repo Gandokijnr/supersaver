@@ -11,7 +11,7 @@ export function generateSessionId(): string {
   if (import.meta.client) {
     let id = localStorage.getItem('ss_session_id')
     if (!id) {
-      id = 'sess_' + Math.random().toString(36).slice(2) + Date.now().toString(36)
+      id = 'sess_' + crypto.randomUUID()
       localStorage.setItem('ss_session_id', id)
     }
     return id

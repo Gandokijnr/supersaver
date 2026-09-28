@@ -21,11 +21,12 @@ export function useAdminAuth() {
     })
     if (rpcError) return { success: false, error: 'Authentication failed.' }
     const result = data as any
-    if (!result || !result.id) return { success: false, error: 'Invalid credentials.' }
+    if (!result || !result.id || !result.session_token) return { success: false, error: 'Invalid credentials or account migration is not installed.' }
     admin.value = result as AdminUser
-    token.value = 'admin_' + result.id
+    token.value = result.session_token
     if (import.meta.client) {
       localStorage.setItem('ss_admin', JSON.stringify(result))
+      localStorage.setItem('ss_admin_token', result.session_token)
     }
     return { success: true }
   }
@@ -33,7 +34,8 @@ export function useAdminAuth() {
   function restore() {
     if (!import.meta.client) return
     const saved = localStorage.getItem('ss_admin')
-    if (saved) {
+    token.value = localStorage.getItem('ss_admin_token')
+    if (saved && token.value) {
       try { admin.value = JSON.parse(saved) } catch { localStorage.removeItem('ss_admin') }
     }
   }
@@ -42,6 +44,7 @@ export function useAdminAuth() {
     admin.value = null
     token.value = null
     if (import.meta.client) localStorage.removeItem('ss_admin')
+    if (import.meta.client) localStorage.removeItem('ss_admin_token')
   }
 
   return { admin, isLoggedIn, role, branchId, canAccess, login, logout, restore }

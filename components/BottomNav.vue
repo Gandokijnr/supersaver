@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const cartStore = useCartStore()
 const route = useRoute()
 
 const items = [
@@ -7,7 +6,7 @@ const items = [
   { label: 'Categories', icon: 'grid', to: '/categories' },
   { label: 'Search', icon: 'search', to: '/search' },
   { label: 'Orders', icon: 'bag', to: '/orders' },
-  { label: 'Cart', icon: 'cart', to: '/cart' },
+  { label: 'Profile', icon: 'profile', to: '/profile' },
 ]
 
 function isActive(to: string) {
@@ -40,12 +39,8 @@ function isActive(to: string) {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
           </svg>
           <svg v-else class="w-6 h-6 transition-transform duration-200" :class="isActive(item.to) ? 'scale-110' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM5 21v-2a7 7 0 0114 0v2H5z" />
           </svg>
-          <span
-            v-if="item.icon === 'cart' && cartStore.itemCount > 0"
-            class="absolute -top-1.5 -right-2 bg-accent-500 text-white text-[9px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-1 animate-fade-in"
-          >{{ cartStore.itemCount }}</span>
         </div>
         <span class="text-[10px] font-medium" :class="isActive(item.to) ? 'font-semibold' : ''">{{ item.label }}</span>
         <span v-if="isActive(item.to)" class="absolute -bottom-0.5 w-1 h-1 bg-brand-500 rounded-full" />
