@@ -21,8 +21,9 @@ export function useCatalog() {
     return data as Brand[]
   }
 
-  async function fetchBranchProducts(branchId: string, limit: number = 50): Promise<CatalogItem[]> {
-    const { data, error } = await supabase
+  async function fetchBranchProducts(branchId: string, limit: number = 50, productIds?: string[]): Promise<CatalogItem[]> {
+    if (productIds?.length === 0) return []
+    let query = supabase
       .from('branch_products')
       .select(`
         id,
@@ -43,6 +44,8 @@ export function useCatalog() {
       .eq('product.is_active', true)
       .limit(limit)
 
+    if (productIds) query = query.in('product_id', productIds)
+    const { data, error } = await query
     if (error) throw error
 
     return (data || []).map((row: any) => {
@@ -75,6 +78,27 @@ export function useCatalog() {
     })
   }
 
+  async function fetchPromotionProducts(branchId: string): Promise<CatalogItem[]> {
+    const now = new Date().toISOString()
+    const { data, error } = await supabase
+      .from('promotions')
+      .select('id, promotion_products!inner(product_id)')
+      .eq('is_active', true)
+      .eq('promotion_products.branch_id', branchId)
+      .or(`start_at.is.null,start_at.lte.${now}`)
+      .or(`end_at.is.null,end_at.gte.${now}`)
+
+    if (error) throw error
+    const ids = [...new Set((data || []).flatMap(promotion =>
+      promotion.promotion_products.map(item => item.product_id as string)
+    ))]
+    const products: CatalogItem[] = []
+    for (let offset = 0; offset < ids.length; offset += 100) {
+      products.push(...await fetchBranchProducts(branchId, 100, ids.slice(offset, offset + 100)))
+    }
+    return products
+  }
+
   async function fetchByCategory(branchId: string, categorySlug: string): Promise<CatalogItem[]> {
     const all = await fetchBranchProducts(branchId, 200)
     return all.filter((p) => p.category_slug === categorySlug)
@@ -101,6 +125,7 @@ export function useCatalog() {
     fetchCategories,
     fetchBrands,
     fetchBranchProducts,
+    fetchPromotionProducts,
     fetchByCategory,
     searchProducts,
     fetchProductBySlug,
