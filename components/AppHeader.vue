@@ -32,7 +32,7 @@ const cartCount = computed(() => cartStore.itemCount)
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
           </div>
-          <span class="font-extrabold text-lg text-ink-800 hidden sm:block">SuperSaver</span>
+          <span class="font-extrabold text-lg text-ink-800 hidden sm:block">Supersaver</span>
         </NuxtLink>
 
         <!-- Branch selector -->
@@ -47,13 +47,13 @@ const cartCount = computed(() => cartStore.itemCount)
           <div class="hidden sm:block text-left">
             <div class="text-[10px] text-ink-400 leading-none">Shopping from</div>
             <div class="text-sm font-semibold text-ink-800 leading-tight flex items-center gap-1">
-              {{ branchStore.currentBranch?.name.replace('SuperSaver ', '') }}
+              {{ branchStore.currentBranch?.name.replace('Supersaver ', '') }}
               <svg class="w-3 h-3 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
           </div>
-          <span class="sm:hidden text-sm font-semibold text-ink-800">{{ branchStore.currentBranch?.name.replace('SuperSaver ', '') }}</span>
+          <span class="sm:hidden text-sm font-semibold text-ink-800">{{ branchStore.currentBranch?.name.replace('Supersaver ', '') }}</span>
         </NuxtLink>
 
         <!-- Search -->

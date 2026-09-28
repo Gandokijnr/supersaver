@@ -45,7 +45,7 @@ watch(() => branchStore.currentBranch?.id, async (newId, oldId) => {
             </svg>
           </div>
           <h2 class="text-xl font-bold text-ink-800">Where would you like to shop from?</h2>
-          <p class="text-ink-500 mt-2 text-sm">Select your nearest SuperSaver branch to see products and prices available there.</p>
+          <p class="text-ink-500 mt-2 text-sm">Select your nearest Supersaver branch to see products and prices available there.</p>
         </div>
         <NuxtLink to="/select-branch" class="btn-primary w-full text-center block">Choose a Branch</NuxtLink>
       </div>

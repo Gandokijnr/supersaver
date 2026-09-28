@@ -1,5 +1,5 @@
 /*
-# SuperSaver Supermarket - Core Schema
+# Supersaver Supermarket - Core Schema
 
 ## Overview
 Multi-branch supermarket e-commerce platform with branch-aware inventory.

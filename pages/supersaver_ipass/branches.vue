@@ -78,7 +78,7 @@ async function toggleActive(b: any) {
       <div class="card p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
         <h2 class="text-lg font-bold text-ink-800 mb-4">{{ editBranch ? 'Edit' : 'New' }} Branch</h2>
         <div class="space-y-3">
-          <div><label class="text-sm font-medium text-ink-600 mb-1 block">Name *</label><input v-model="form.name" class="input" placeholder="SuperSaver Gbagada" /></div>
+          <div><label class="text-sm font-medium text-ink-600 mb-1 block">Name *</label><input v-model="form.name" class="input" placeholder="Supersaver Gbagada" /></div>
           <div><label class="text-sm font-medium text-ink-600 mb-1 block">Address *</label><input v-model="form.address" class="input" /></div>
           <div class="grid grid-cols-2 gap-3">
             <div><label class="text-sm font-medium text-ink-600 mb-1 block">Phone</label><input v-model="form.phone" class="input" /></div>

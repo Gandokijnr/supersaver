@@ -14,7 +14,7 @@ const cartStore = useCartStore()
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
-            <span class="font-extrabold text-lg text-white">SuperSaver</span>
+            <span class="font-extrabold text-lg text-white">Supersaver</span>
           </div>
           <p class="text-sm text-ink-400">Your trusted supermarket for fresh groceries and everyday essentials across Lagos.</p>
         </div>
@@ -36,7 +36,7 @@ const cartStore = useCartStore()
           </ul>
         </div>
         <div>
-          <h3 class="text-white font-semibold mb-3 text-sm">Why SuperSaver?</h3>
+          <h3 class="text-white font-semibold mb-3 text-sm">Why Supersaver?</h3>
           <ul class="space-y-2 text-sm text-ink-400">
             <li>Authentic products</li>
             <li>Convenient delivery</li>
@@ -46,7 +46,7 @@ const cartStore = useCartStore()
         </div>
       </div>
       <div class="border-t border-ink-800 mt-8 pt-6 text-center text-sm text-ink-500">
-        &copy; {{ new Date().getFullYear() }} SuperSaver Supermarket. All rights reserved.
+        &copy; {{ new Date().getFullYear() }} Supersaver Supermarket. All rights reserved.
       </div>
     </div>
   </footer>

@@ -6,11 +6,11 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   app: {
     head: {
-      title: 'SuperSaver Supermarket — Fresh Groceries. Better Prices. Delivered.',
+      title: 'Supersaver Supermarket — Fresh Groceries. Better Prices. Delivered.',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Shop groceries online from your nearest SuperSaver branch. Fresh produce, beverages, household essentials, and more — delivered to your door.' }
+        { name: 'description', content: 'Shop groceries online from your nearest Supersaver branch. Fresh produce, beverages, household essentials, and more — delivered to your door.' }
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },

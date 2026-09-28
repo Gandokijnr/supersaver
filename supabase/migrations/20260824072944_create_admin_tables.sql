@@ -1,5 +1,5 @@
 /*
-# SuperSaver Admin — Operations Tables
+# Supersaver Admin — Operations Tables
 
 ## Overview
 Adds the tables needed for the admin operations console: admin users, order

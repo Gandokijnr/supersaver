@@ -56,7 +56,7 @@ function timeAgo(date: string) {
       <div class="flex gap-2 w-full sm:w-auto">
         <select v-if="isSuperAdmin" v-model="branchFilter" class="input flex-1 sm:flex-none text-sm py-2">
           <option :value="null">All Branches</option>
-          <option v-for="b in branches" :key="b.id" :value="b.id">{{ b.name.replace('SuperSaver ', '') }}</option>
+          <option v-for="b in branches" :key="b.id" :value="b.id">{{ b.name.replace('Supersaver ', '') }}</option>
         </select>
         <select v-model="statusFilter" class="input flex-1 sm:flex-none text-sm py-2">
           <option value="all">All Status</option>

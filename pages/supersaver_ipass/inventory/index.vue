@@ -76,7 +76,7 @@ const filtered = computed(() => {
 
     <div class="flex gap-2 sm:gap-3 mb-4 flex-wrap">
       <select v-if="isSuperAdmin" v-model="branchFilter" class="input w-full sm:w-auto text-sm py-2">
-        <option v-for="b in branches" :key="b.id" :value="b.id">{{ b.name.replace('SuperSaver ', '') }}</option>
+        <option v-for="b in branches" :key="b.id" :value="b.id">{{ b.name.replace('Supersaver ', '') }}</option>
       </select>
       <input v-model="search" type="text" placeholder="Search by name or SKU..." class="input flex-1 min-w-[140px] text-sm py-2" />
       <select v-model="stockFilter" class="input w-full sm:w-auto text-sm py-2">

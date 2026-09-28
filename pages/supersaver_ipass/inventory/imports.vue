@@ -45,7 +45,7 @@ onMounted(async () => { try { jobs.value = await fetchImportJobs() } finally { l
           <tbody class="divide-y divide-ink-100">
             <tr v-for="job in jobs" :key="job.id" class="hover:bg-ink-50">
               <td class="px-4 py-3 font-semibold text-ink-800">{{ job.file_name }}</td>
-              <td class="px-4 py-3 hidden md:table-cell text-ink-600">{{ job.branch?.name?.replace('SuperSaver ', '') || '—' }}</td>
+              <td class="px-4 py-3 hidden md:table-cell text-ink-600">{{ job.branch?.name?.replace('Supersaver ', '') || '—' }}</td>
               <td class="px-4 py-3 text-right text-ink-700">{{ job.total_rows || 0 }}</td>
               <td class="px-4 py-3 text-right text-brand-600 font-semibold hidden md:table-cell">{{ job.successful_rows || 0 }}</td>
               <td class="px-4 py-3 text-right text-red-600 font-semibold hidden md:table-cell">{{ job.failed_rows || 0 }}</td>

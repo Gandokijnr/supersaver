@@ -19,7 +19,7 @@ const categoryStyles: Record<string, { bg: string; icon: string }> = {
   'fresh-produce': { bg: 'bg-lime-50', icon: '🥬' },
 }
 
-const branchName = computed(() => branchStore.currentBranch?.name.replace('SuperSaver ', '') || '')
+const branchName = computed(() => branchStore.currentBranch?.name.replace('Supersaver ', '') || '')
 const flashDeals = computed(() => products.value.filter(p => p.discount_percent && p.discount_percent >= 15).slice(0, 6))
 const bestSellers = computed(() => products.value.slice(0, 8))
 const essentials = computed(() => products.value.filter(p => ['groceries', 'dairy', 'bakery'].includes(p.category_slug || '')).slice(0, 8))
@@ -52,7 +52,7 @@ onMounted(async () => {
             Shopping from {{ branchName }} Branch
           </span>
           <h1 class="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight">Fresh groceries.<br /><span class="text-brand-300">Better prices.</span><br />Delivered.</h1>
-          <p class="text-brand-100 mt-5 text-sm md:text-base max-w-md leading-relaxed">Everything your home needs, handpicked from your nearest SuperSaver branch and delivered to your door.</p>
+          <p class="text-brand-100 mt-5 text-sm md:text-base max-w-md leading-relaxed">Everything your home needs, handpicked from your nearest Supersaver branch and delivered to your door.</p>
           <div class="flex flex-wrap gap-3 mt-7">
             <NuxtLink to="/category/groceries" class="bg-white text-brand-700 font-bold px-5 py-3 rounded-xl hover:bg-brand-50 transition-colors">Shop groceries</NuxtLink>
             <NuxtLink to="/category/fresh-produce" class="border border-white/30 text-white font-semibold px-5 py-3 rounded-xl hover:bg-white/10 transition-colors">Fresh produce</NuxtLink>

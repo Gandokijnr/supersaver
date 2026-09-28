@@ -44,7 +44,7 @@ const branchStats = computed(() => {
       </div>
       <select v-if="isSuperAdmin" v-model="branchFilter" class="input w-auto text-sm py-2">
         <option :value="null">All Branches</option>
-        <option v-for="b in stats?.branches || []" :key="b.id" :value="b.id">{{ b.name.replace('SuperSaver ', '') }}</option>
+        <option v-for="b in stats?.branches || []" :key="b.id" :value="b.id">{{ b.name.replace('Supersaver ', '') }}</option>
       </select>
     </div>
 
