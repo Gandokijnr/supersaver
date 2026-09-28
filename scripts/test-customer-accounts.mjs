@@ -29,6 +29,7 @@ try {
     '20260824073908_fix_admin_login.sql',
     '20260824073927_fix_update_order_status.sql',
     '20260928090000_customer_accounts.sql',
+    '20260928100000_manage_promotion_items.sql',
   ]) await db.exec(await readFile(new URL(`../supabase/migrations/${file}`, import.meta.url), 'utf8'))
 
   const a = '00000000-0000-4000-8000-000000000001'
@@ -80,11 +81,22 @@ try {
   assert.ok(login.session_token)
   await identity(null, 'admin-browser', login.session_token)
   assert.equal(await scalar('SELECT count(*)::int FROM orders'), 2)
+  const promotion = await scalar("INSERT INTO promotions(name,is_active) VALUES ('Test promotion',false) RETURNING id")
+  assert.equal(await scalar('SELECT count(*)::int FROM promotions WHERE id=$1', [promotion]), 1)
+  assert.equal(await scalar('SELECT manage_promotion_items($1,$2,$3::uuid[])', [promotion, branch, [product, product]]), 1)
+  assert.equal(await scalar('SELECT manage_promotion_items($1,$2,$3::uuid[])', [promotion, branch, [product]]), 0)
+  await assert.rejects(() => sql('SELECT manage_promotion_items($1,$2,$3::uuid[])', [promotion, otherBranch, [product]]))
+  await assert.rejects(() => sql('SELECT manage_promotion_items($1,$2,$3::uuid[])', [promotion, branch, []]))
+  assert.equal(await scalar('SELECT count(*)::int FROM promotion_products WHERE promotion_id=$1', [promotion]), 1)
+  assert.equal(await scalar('SELECT manage_promotion_items($1,$2,$3::uuid[],true)', [promotion, branch, [product]]), 1)
+  assert.equal(await scalar('SELECT manage_promotion_items($1,$2,$3::uuid[])', [promotion, branch, [product]]), 1)
   await sql("SELECT update_order_status($1,'confirmed')", [owned.order_id])
   await identity(a, 'different-device')
   assert.equal(await scalar('SELECT to_status FROM order_status_history'), 'confirmed')
   await identity(b)
   assert.equal(await scalar('SELECT count(*)::int FROM order_status_history'), 0)
+  await assert.rejects(() => sql('SELECT manage_promotion_items($1,$2,$3::uuid[])', [promotion, branch, [product]]))
+  await assert.rejects(() => sql('INSERT INTO promotion_products(promotion_id,branch_id,product_id) VALUES ($1,$2,$3)', [promotion, branch, product]))
   await identity(null, 'admin-browser', 'forged-token')
   assert.equal(await scalar('SELECT count(*)::int FROM orders'), 0)
   await db.exec('RESET ROLE')
@@ -92,6 +104,7 @@ try {
   await identity(null, 'admin-browser', login.session_token)
   assert.equal(await scalar('SELECT count(*)::int FROM orders'), 0)
   await assert.rejects(() => sql("SELECT update_order_status($1,'processing')", [owned.order_id]))
+  await assert.rejects(() => sql('SELECT manage_promotion_items($1,$2,$3::uuid[],true)', [promotion, branch, [product]]))
   await db.exec('RESET ROLE')
   await sql('UPDATE admin_users SET branch_id=$1 WHERE id=$2', [branch, login.id])
   await identity(null, 'admin-browser', login.session_token)
@@ -100,5 +113,5 @@ try {
   await sql("UPDATE admin_sessions SET expires_at=now()-interval '1 second'")
   await identity(null, 'admin-browser', login.session_token)
   assert.equal(await scalar('SELECT count(*)::int FROM orders'), 0)
-  console.log('PASS: migration, account ownership, cross-device access, profile isolation, guest isolation, protected checkout, admin authentication, branch scope, status history, and token expiry.')
+  console.log('PASS: account isolation, checkout, admin scope, status history, token expiry, promotion add/remove, duplicate prevention, inventory validation, and promotion authorization.')
 } finally { await db.close() }
